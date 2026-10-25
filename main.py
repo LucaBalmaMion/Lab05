@@ -47,38 +47,9 @@ def main(page: ft.Page):
         contatore.value = str(val - 1)
         page.update()
 
-    def aggiungiStrumentoHandler():
-        elemento_nullo = False
-        elementi_numerici = False
-        if tipoStrumento.value != '':
-            tipo = tipoStrumento.value
-        else:
-            elemento_nullo = True
 
-        if marcaStrumento.value != '':
-            marca = marcaStrumento.value
-        else:
-            elemento_nullo = True
 
-        if annoStrumento.value != '':
-            try:
-                annoAcquisto = int(annoStrumento.value)
-            except ValueError:
-                elementi_numerici = True
-        else:
-            elemento_nullo = True
 
-        if elemento_nullo:
-            alert.show_alert('Errore: Nessun campo deve essere vuoto')
-        elif elementi_numerici:
-            alert.show_alert('Errore: il campo Anno acquisto deve contenere numeri interi')
-        else:
-            strumento = deposito.aggiungi_strumento(tipo, marca, annoAcquisto, float(contatore.value))
-        tipoStrumento.value = ''
-        marcaStrumento.value = ''
-        annoStrumento.value = ''
-        lista_strumenti.controls.append(ft.Text(f'{strumento}'))
-        page.update()
 
 
 
@@ -92,7 +63,7 @@ def main(page: ft.Page):
     plusBtn = ft.IconButton(icon = ft.Icons.ADD, on_click=plusBtn_handler, icon_color = 'green')
     contatore = ft.TextField(value = '0', text_align = ft.TextAlign.CENTER, disabled = False, width = 60)
     rigaStrumenti = ft.Row([tipoStrumento, marcaStrumento, annoStrumento, minusBtn, contatore, plusBtn])
-    aggiungiStrumentoBtn = ft.Button('Aggiungi strumento', on_click = aggiungiStrumentoHandler)
+
 
 
 
@@ -114,6 +85,40 @@ def main(page: ft.Page):
 
     # Handlers per la gestione dei pulsanti utili all'inserimento di un nuovo strumento
     # TODO
+    def aggiungiStrumentoHandler():
+        elemento_nullo = False
+        elementi_numerici = False
+        if tipoStrumento.value != '':
+            tipo = tipoStrumento.value
+        else:
+            elemento_nullo = True
+
+        if marcaStrumento.value != '':
+            marca = marcaStrumento.value
+        else:
+            elemento_nullo = True
+        if annoStrumento.value != '':
+            try:
+                annoAcquisto = int(annoStrumento.value)
+            except ValueError:
+                elementi_numerici = True
+        else:
+            elemento_nullo = True
+        strumento = None
+
+        if elemento_nullo:
+            alert.show_alert('Errore: Nessun campo deve essere vuoto')
+        elif elementi_numerici:
+            alert.show_alert('Errore: il campo Anno acquisto deve contenere numeri interi')
+        else:
+            strumento = deposito.aggiungi_strumento(tipo, marca, annoAcquisto, float(contatore.value))
+        tipoStrumento.value = ''
+        marcaStrumento.value = ''
+        annoStrumento.value = ''
+        contatore.value = '0'
+        if strumento is not None:
+            lista_strumenti.controls.append(ft.Text(f'{strumento}'))
+        page.update()
 
     # --- EVENTI ---
     toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=cambia_tema)
@@ -121,7 +126,7 @@ def main(page: ft.Page):
 
     # Pulsanti per la gestione dell'inserimento di un nuovo strumento
     # TODO
-
+    aggiungiStrumentoBtn = ft.Button('Aggiungi strumento', on_click=aggiungiStrumentoHandler)
     # --- LAYOUT ---
     page.add(
         toggle_cambia_tema,
