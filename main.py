@@ -47,14 +47,52 @@ def main(page: ft.Page):
         contatore.value = str(val - 1)
         page.update()
 
+    def aggiungiStrumentoHandler():
+        elemento_nullo = False
+        elementi_numerici = False
+        if tipoStrumento.value != '':
+            tipo = tipoStrumento.value
+        else:
+            elemento_nullo = True
+
+        if marcaStrumento.value != '':
+            marca = marcaStrumento.value
+        else:
+            elemento_nullo = True
+
+        if annoStrumento.value != '':
+            try:
+                annoAcquisto = int(annoStrumento.value)
+            except ValueError:
+                elementi_numerici = True
+        else:
+            elemento_nullo = True
+
+        if elemento_nullo:
+            alert.show_alert('Errore: Nessun campo deve essere vuoto')
+        elif elementi_numerici:
+            alert.show_alert('Errore: il campo Anno acquisto deve contenere numeri interi')
+        else:
+            strumento = deposito.aggiungi_strumento(tipo, marca, annoAcquisto, float(contatore.value))
+        tipoStrumento.value = ''
+        marcaStrumento.value = ''
+        annoStrumento.value = ''
+        lista_strumenti.controls.append(ft.Text(f'{strumento}'))
+        page.update()
+
+
+
+
+
     txt_nuovoStrumento = ft.Text(value = 'Aggiungi nuovo strumento', size = 20)
-    tipoStrumento = ft.TextField(value = 'Tipo')
-    marcaStrumento = ft.TextField(value = 'Marca')
-    annoStrumento = ft.TextField(value = 'Anno acquisto')
+    tipoStrumento = ft.TextField(value = '', label = 'Tipo')
+    marcaStrumento = ft.TextField(value = '', label = 'Marca')
+    annoStrumento = ft.TextField(value = '', label = 'Anno acquisto')
     minusBtn = ft.IconButton(icon = ft.Icons.REMOVE, on_click = minusBtn_handler, icon_color = 'red')
     plusBtn = ft.IconButton(icon = ft.Icons.ADD, on_click=plusBtn_handler, icon_color = 'green')
-    contatore = ft.TextField(value = '0', text_align = ft.TextAlign.CENTER, disabled = True, width = 60)
+    contatore = ft.TextField(value = '0', text_align = ft.TextAlign.CENTER, disabled = False, width = 60)
     rigaStrumenti = ft.Row([tipoStrumento, marcaStrumento, annoStrumento, minusBtn, contatore, plusBtn])
+    aggiungiStrumentoBtn = ft.Button('Aggiungi strumento', on_click = aggiungiStrumentoHandler)
 
 
 
@@ -104,6 +142,7 @@ def main(page: ft.Page):
         ft.Divider(),
         txt_nuovoStrumento,
         rigaStrumenti,
+        aggiungiStrumentoBtn,
 
         # Sezione 4
         ft.Divider(),
